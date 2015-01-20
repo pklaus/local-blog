@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from bottle import Bottle, route, run, post, get, request, response, redirect, error, abort, static_file, TEMPLATE_PATH
+from bottle import Bottle, route, run, post, get, request, response, redirect, error, abort, static_file, TEMPLATE_PATH, Jinja2Template, url
 from bottle import jinja2_template as template, jinja2_view as view
 import json
 import time
@@ -15,9 +15,17 @@ import markdown
 
 TEMPLATE_PATH.append(os.path.join(os.path.split(os.path.realpath(__file__))[0],'views'))
 
-interface = Bottle()
-
+### Global objects
 POSTS = object()
+DEFAULT_CONTEXT = {
+  'author': "John Doe",
+  'blog_title': "Local Blog",
+  'catchphrase': "Your blog, served from your local computer",
+  'url': url
+}
+
+### The Bottle() web application
+interface = Bottle()
 
 @interface.route('/static/<path:path>')
 def static(path):
@@ -63,6 +71,9 @@ if __name__ == '__main__':
       help='Start in debug mode (with verbose HTTP error pages.')
     parser.add_argument('-l', '--log-file',
       help='The file to store the server log in.')
+    parser.add_argument('--title', '-t', help='The title of the blog')
+    parser.add_argument('--catchphrase', '-c', help='A catchphrase for the blog')
+    parser.add_argument('--author', '-a', help='The name of the author of the blog')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
@@ -72,6 +83,11 @@ if __name__ == '__main__':
         POSTS = Posts(args.folder, args.baselink)
     else:
         POSTS = Posts(args.folder)
+
+    if args.author: DEFAULT_CONTEXT['author'] = args.author
+    if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase
+    if args.title : DEFAULT_CONTEXT['blog_title'] = args.title
+    Jinja2Template.defaults = DEFAULT_CONTEXT
 
     app = StripPathMiddleware(interface)
 
