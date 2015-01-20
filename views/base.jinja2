@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>{% block title %}{% endblock %} - Locus Live-Tracking for BottlePy</title>
+    {% endblock %}
+</head>
+<body>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+</body>
+</html>
+

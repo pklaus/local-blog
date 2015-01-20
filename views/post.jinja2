@@ -1,0 +1,15 @@
+{% extends "base.jinja2" %}
+
+{% block title %}Blog Post{% endblock %}
+
+{% block content %}
+  <div id="headsection">
+    <h2>{{ post.title }}</h2>
+      <div>Categories: {{ post.categories|join(', ') }}</div>
+      <div>Tags: {{ post.tags|join(', ') }}</div>
+    <div id="content">
+  </div>
+    {{ post.rendered_content }}
+  </div>
+{% endblock %}
+
