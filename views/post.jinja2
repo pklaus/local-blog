@@ -6,8 +6,9 @@
   <div class="blog-post">
     <h2 class="blog-post-title">{{ post.title }}</h2>
     <p class="blog-post-meta">
-      <div>Categories: {{ post.categories|join(', ') }}</div>
-      <div>Tags: {{ post.tags|join(', ') }}</div>
+      {{ post.creation_date.strftime("%Y-%m-%d %H:%M") }}<br />
+      Category: {{ post.categories|join(', ') }}<br />
+      Tags: {{ post.tags|join(', ') }}
     </p>
     {{ post.rendered_content }}
   </div>

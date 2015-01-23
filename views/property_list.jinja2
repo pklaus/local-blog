@@ -1,0 +1,33 @@
+{% extends "base.jinja2" %}
+
+{% block page_title %}{{ list_title }}{% endblock %}
+
+{% block content %}
+
+  {% if introduction_paragraph %}
+  <p>{{ introduction_paragraph }}</p>
+  {% endif %}
+
+  <div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>{{ property_name }}</th>
+        <th>Occurrence</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for el in property %}
+      <tr>
+        <td>{{ el.name }}</td>
+        <td>{{ el.occurrence }}</td>
+        <td><a href="/{{ property_name|lower }}/{{ el.name }}">{{ el.name }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+{% endblock %}
+

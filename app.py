@@ -23,6 +23,7 @@ DEFAULT_CONTEXT = {
   'catchphrase': "Your blog, served from your local computer",
   'url': url,
   'months': [],
+  'active': ''
 }
 
 ### The Bottle() web application
@@ -35,7 +36,48 @@ def static(path):
 @interface.route('/')
 @view('home.jinja2')
 def home():
-    return dict()
+    return dict(active='home')
+
+@interface.route('/tag/<tag>')
+@view('list_posts.jinja2')
+def tag_postlist(tag):
+    list_title = 'Posts with the tag ' + tag
+    posts = [post for post in POSTS.posts if tag in post['tags']]
+    return dict(posts=posts, list_title=list_title)
+
+@interface.route('/category/<category>')
+@view('list_posts.jinja2')
+def category_postlist(category):
+    list_title = 'Posts with the category ' + category
+    posts = [post for post in POSTS.posts if category in post['categories']]
+    return dict(posts=posts, list_title=list_title)
+
+@interface.route('/tags')
+@view('property_list.jinja2')
+def taglist():
+    descr = 'All tags given to blog posts in this blog:'
+    tags, ret_list = [], []
+    for post in POSTS.posts:
+        tags += post['tags']
+    unique_tags = set(tags)
+    for tag in unique_tags:
+        ret_list.append({'name': tag, 'occurrence': tags.count(tag)})
+    ret_list = sorted(ret_list, key=lambda k: k['occurrence'], reverse=True)
+    return dict(property=ret_list, introduction_paragraph=descr, property_name='Tag', active='tags')
+
+@interface.route('/categories')
+@view('property_list.jinja2')
+def categorylist():
+    descr = 'The categories of posts in this blog:'
+    categories, ret_list = [], []
+    for post in POSTS.posts:
+        categories += post['categories']
+    unique_categories = set(categories)
+    unique_categories.remove('Uncategorized')
+    for category in unique_categories:
+        ret_list.append({'name': category, 'occurrence': categories.count(category)})
+    ret_list = sorted(ret_list, key=lambda k: k['occurrence'], reverse=True)
+    return dict(property=ret_list, introduction_paragraph=descr, property_name='Category', active='categories')
 
 @interface.route('/search/<search_phrase>')
 @view('search.jinja2')
@@ -45,14 +87,24 @@ def search(search_phrase):
 
 @interface.route('/<year:int>/<month:int>')
 @view('list_posts.jinja2')
-def year_month_list(year, month=None):
+def year_month_postlist(year, month=None):
     list_title = 'Posts from {}-{}'.format(year, month)
     posts = [post for post in POSTS.posts if post['year'] == year and post['month'] == month]
     return dict(posts=posts, list_title=list_title)
 
+@interface.route('/post/<status>/<file>')
+@view('post.jinja2')
+def post_from_filename(status, file):
+    result = [post for post in POSTS.posts if post['status'] == status and post['file'] == file]
+    if len(result) == 1:
+        post = result[0]
+        post['rendered_content'] = markdown.markdown(post['content'], extensions=['markdown.extensions.tables', 'markdown.extensions.codehilite'])
+        return dict(post=result[0])
+    else: abort(404, "No such blog post.")
+
 @interface.route('/<year:int>/<month:int>/<slug>')
 @view('post.jinja2')
-def show_latest(year, month, slug):
+def post_from_link(year, month, slug):
     result = [post for post in POSTS.posts if post['year'] == year and post['month'] == month and post['slug'] == slug]
     if len(result) == 1:
         post = result[0]
@@ -67,7 +119,8 @@ class StripPathMiddleware(object):
     e['PATH_INFO'] = e['PATH_INFO'].rstrip('/')
     return self.app(e,h)
 
-if __name__ == '__main__':
+def main():
+    global POSTS, DEFAULT_CONTEXT
     import argparse
     parser = argparse.ArgumentParser( 
       description='Run a local blog.' )
@@ -111,4 +164,7 @@ if __name__ == '__main__':
             run(app, host='::', server='cherrypy', port=args.port)
         else:
             run(app, host='0.0.0.0', server='cherrypy', port=args.port)
+
+if __name__ == '__main__':
+    main()
 

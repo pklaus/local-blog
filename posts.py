@@ -43,8 +43,10 @@ class Posts(object):
         title = header[0][2:]
         assert header[2].startswith('* Categories: ')
         categories = header[2][14:].split(', ')
+        if categories == ['']: categories = []
         assert header[3].startswith('* Tags: ')
         tags = header[3][8:].split(', ')
+        if tags == ['']: tags = []
         assert header[4].startswith('* Creation Date: ')
         creation_date = datetime.strptime(header[4][17:], self.TIME_FMT)
         assert header[5].startswith('* Modification Date: ')

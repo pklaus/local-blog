@@ -3,14 +3,21 @@
 {% block page_title %}{{ list_title }}{% endblock %}
 
 {% block content %}
+
+  {% if introduction_paragraph %}
+  <p>{{ introduction_paragraph }}</p>
+  {% endif %}
+
   {% for post in posts %}
   <div class="blog-post">
     <h2 class="blog-post-title">{{ post.title }}</h2>
     <p class="blog-post-meta">
-      <div>Categories: {{ post.categories|join(', ') }}</div>
-      <div>Tags: {{ post.tags|join(', ') }}</div>
-      <div>Link: <a href="{{ post.address }}">{{post.address}}</a></div>
+    <p class="blog-post-meta">
+      {{ post.creation_date.strftime("%Y-%m-%d %H:%M") }}<br />
+      Category: {{ post.categories|join(', ') }}<br />
+      Tags: {{ post.tags|join(', ') }}
     </p>
+    <p><a href="{{ post.address or '/post/{status}/{file}'.format(**post) }}">Read on</a></p>
   </div>
   {% endfor %}
 {% endblock %}
