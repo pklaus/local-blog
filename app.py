@@ -23,6 +23,7 @@ DEFAULT_CONTEXT = {
   'catchphrase': "Your blog, served from your local computer",
   'url': url,
   'months': [],
+  'external_links': [],
   'active': ''
 }
 
@@ -135,6 +136,7 @@ def main():
     parser.add_argument('--title', '-t', help='The title of the blog')
     parser.add_argument('--catchphrase', '-c', help='A catchphrase for the blog')
     parser.add_argument('--author', '-a', help='The name of the author of the blog')
+    parser.add_argument('--external-links', '-e', help='Links to external sites of yours. Specify like Github=http://github.com,Twitter=http://twitter.com')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
@@ -146,6 +148,11 @@ def main():
         POSTS = Posts(args.folder)
 
     DEFAULT_CONTEXT['months'] = POSTS.months
+
+    if args.external_links:
+        for el in args.external_links.split(','):
+            parts = el.split('=')
+            DEFAULT_CONTEXT['external_links'].append({'name': parts[0], 'url': parts[1]})
 
     if args.author: DEFAULT_CONTEXT['author'] = args.author
     if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase
