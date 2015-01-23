@@ -21,7 +21,8 @@ DEFAULT_CONTEXT = {
   'author': "John Doe",
   'blog_title': "Local Blog",
   'catchphrase': "Your blog, served from your local computer",
-  'url': url
+  'url': url,
+  'months': [],
 }
 
 ### The Bottle() web application
@@ -41,6 +42,13 @@ def home():
 def search(search_phrase):
     if not search_phrase: return dict(results=None)
     return dict(results=POSTS.search_literally(search_phrase))
+
+@interface.route('/<year:int>/<month:int>')
+@view('list_posts.jinja2')
+def year_month_list(year, month=None):
+    list_title = 'Posts from {}-{}'.format(year, month)
+    posts = [post for post in POSTS.posts if post['year'] == year and post['month'] == month]
+    return dict(posts=posts, list_title=list_title)
 
 @interface.route('/<year:int>/<month:int>/<slug>')
 @view('post.jinja2')
@@ -83,6 +91,8 @@ if __name__ == '__main__':
         POSTS = Posts(args.folder, args.baselink)
     else:
         POSTS = Posts(args.folder)
+
+    DEFAULT_CONTEXT['months'] = POSTS.months
 
     if args.author: DEFAULT_CONTEXT['author'] = args.author
     if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase

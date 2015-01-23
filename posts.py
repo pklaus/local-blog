@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from datetime import datetime
+from datetime import datetime, date
 
 class Posts(object):
 
@@ -11,10 +11,26 @@ class Posts(object):
     def __init__(self, folder, baselink = 'http://yourblog.com'):
         self.folder = folder
         self.posts = []
+        self.years = []
+        self.months = []
         self.baselink = baselink
         for file in os.listdir(folder):
             if file.endswith("." + self.FILE_EXTENSION):
                 self._add_post(file)
+        self.update_collections()
+
+    def update_collections(self):
+        del self.years[:]
+        del self.months[:]
+        for post in self.posts:
+            year = date(post['creation_date'].year, 1, 1)
+            month = date(post['creation_date'].year, post['creation_date'].month, 1)
+            if year not in self.years:
+                self.years.append(year)
+            if month not in self.months:
+                self.months.append(month)
+        self.years.sort(reverse=True)
+        self.months.sort(reverse=True)
 
     def _add_post(self, file):
         post = dict()
