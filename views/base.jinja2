@@ -45,7 +45,7 @@
 
       <div class="blog-header">
         <h1 class="blog-title">{{ blog_title }}</h1>
-        <p class="lead blog-description">{% block catchphrase %}Your blog served locally.{% endblock %}</p>
+        <p class="lead blog-description">{{ catchphrase or "Your blog served locally." }}</p>
       </div>
 
 
