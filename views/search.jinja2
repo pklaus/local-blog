@@ -1,17 +1,22 @@
-{% extends "base.jinja2" %}
+{% extends "list_posts.jinja2" %}
 
-{% block page_title %}Search for {{ search_term or "words in this blog" }}{% endblock %}
+{% block page_title %}Search for {{ search_phrase or "words in this blog" }}{% endblock %}
 
-{% block content %}
-  {% for post in results %}
-  <div class="blog-post">
-    <h2 class="blog-post-title">{{ post.title }}</h2>
-    <p class="blog-post-meta">
-      <div>Categories: {{ post.categories|join(', ') }}</div>
-      <div>Tags: {{ post.tags|join(', ') }}</div>
-      <div>Link: <a href="{{ post.address }}">{{post.address}}</a></div>
-    </p>
-  </div>
-  {% endfor %}
+{% block content_begin %}
+  Search blog posts:
+  <form id="search-form">
+    <div class="input-group">
+      <span class="input-group-addon" id="sizing-addon2">Keywords:</span>
+      <input id="search-field" type="text" class="form-control" placeholder="e.g. sshfs, or wavelength" value="{{ search_phrase or "" }}" aria-describedby="sizing-addon2">
+    </div>
+  </form>
+
+  {% if search_phrase %}
+    {% if posts %}
+      Found {{ posts|length }} search results for "{{search_phrase}}":
+    {% else %}
+      No results found. You may try to search with a more generic term?
+    {% endif %}
+  {% endif %}
 {% endblock %}
 

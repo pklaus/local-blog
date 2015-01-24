@@ -80,11 +80,16 @@ def categorylist():
     ret_list = sorted(ret_list, key=lambda k: k['occurrence'], reverse=True)
     return dict(property=ret_list, introduction_paragraph=descr, property_name='Category', active='categories')
 
+@interface.route('/search')
+@view('search.jinja2')
+def search():
+    return dict(active='search', posts=[])
+
 @interface.route('/search/<search_phrase>')
 @view('search.jinja2')
 def search(search_phrase):
-    if not search_phrase: return dict(results=None)
-    return dict(results=POSTS.search_literally(search_phrase))
+    results = POSTS.search_literally(search_phrase)
+    return dict(active='search', posts=results, search_phrase=search_phrase)
 
 @interface.route('/<year:int>/<month:int>')
 @view('list_posts.jinja2')
