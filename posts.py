@@ -88,6 +88,16 @@ class Posts(object):
                 results.append(post)
         return results
 
+    @property
+    def latest(self):
+        newest_date = datetime(1000, 1, 1, 1, 1, 1)
+        newest_post = None
+        for post in self.posts:
+            if post['creation_date'] > newest_date:
+                newest_date = post['creation_date']
+                newest_post = post
+        return newest_post
+
     def published(self):
         return [post for post in self.posts if post['status'] == 'publish']
 
