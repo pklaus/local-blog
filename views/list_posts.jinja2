@@ -16,9 +16,9 @@
     <h2 class="blog-post-title">{{ post.title }}</h2>
     <p class="blog-post-meta">
     <p class="blog-post-meta">
-      {{ post.creation_date.strftime("%Y-%m-%d %H:%M") }}<br />
-      Category: {{ post.categories|join(', ') }}<br />
-      Tags: {{ post.tags|join(', ') }}
+      {{ post.creation_date.strftime("%Y-%m-%d %H:%M") }}
+      {% if post.categories != ['Uncategorized'] %}<br /> Category: {{ post.categories|join(', ') }}{% endif %}
+      {% if post.tags|length %}<br /> Tags: {{ post.tags|join(', ') }}{% endif %}
     </p>
     <p><a href="{{ post.address or '/post/{status}/{file}'.format(**post) }}">Read on</a></p>
   </div>
