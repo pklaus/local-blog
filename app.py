@@ -92,10 +92,17 @@ def search(search_phrase):
     results = POSTS.search_literally(search_phrase)
     return dict(active='search', posts=results, search_phrase=search_phrase)
 
+@interface.route('/<year:int>')
+@view('list_posts.jinja2')
+def year_postlist(year):
+    list_title = 'Posts from {:04d}'.format(year)
+    posts = [post for post in POSTS.posts if post['year'] == year]
+    return dict(posts=posts, list_title=list_title)
+
 @interface.route('/<year:int>/<month:int>')
 @view('list_posts.jinja2')
-def year_month_postlist(year, month=None):
-    list_title = 'Posts from {}-{}'.format(year, month)
+def year_month_postlist(year, month):
+    list_title = 'Posts from {:04d}-{:02d}'.format(year, month)
     posts = [post for post in POSTS.posts if post['year'] == year and post['month'] == month]
     return dict(posts=posts, list_title=list_title)
 
