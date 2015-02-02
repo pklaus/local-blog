@@ -106,6 +106,12 @@ def year_month_postlist(year, month):
     posts = [post for post in POSTS.posts if post['year'] == year and post['month'] == month]
     return dict(posts=posts, list_title=list_title)
 
+@interface.route('/latest')
+@view('post.jinja2')
+def latest_post():
+    post = POSTS.latest
+    redirect(post['address'] or '/post/{status}/{file}'.format(**post))
+
 @interface.route('/post/<status>/<file>')
 @view('post.jinja2')
 def post_from_filename(status, file):
