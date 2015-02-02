@@ -26,6 +26,7 @@ DEFAULT_CONTEXT = {
   'external_links': [],
   'active': ''
 }
+ALLOW_CRAWLING = 'Disallow'
 
 ### The Bottle() web application
 interface = Bottle()
@@ -118,6 +119,11 @@ def post_from_link(year, month, slug):
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
+@interface.route('/robots.txt')
+def robots():
+    response.content_type = 'text/plain'
+    return "User-agent: *\n{0}: /".format(ALLOW_CRAWLING)
+
 class StripPathMiddleware(object):
   def __init__(self, app):
     self.app = app
@@ -126,7 +132,7 @@ class StripPathMiddleware(object):
     return self.app(e,h)
 
 def main():
-    global POSTS, DEFAULT_CONTEXT
+    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING
     import argparse
     parser = argparse.ArgumentParser( 
       description='Run a local blog.' )
@@ -138,6 +144,7 @@ def main():
       help='Start in debug mode (with verbose HTTP error pages.')
     parser.add_argument('-l', '--log-file',
       help='The file to store the server log in.')
+    parser.add_argument('--allow-crawling', action='store_true', help='Allow search engines to index the site.')
     parser.add_argument('--title', '-t', help='The title of the blog')
     parser.add_argument('--catchphrase', '-c', help='A catchphrase for the blog')
     parser.add_argument('--author', '-a', help='The name of the author of the blog')
@@ -146,6 +153,8 @@ def main():
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
     args = parser.parse_args()
+
+    ALLOW_CRAWLING = 'Allow' if args.allow_crawling else 'Disallow'
 
     if args.baselink:
         POSTS = Posts(args.folder, args.baselink)
