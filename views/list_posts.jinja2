@@ -8,7 +8,9 @@
   {% endblock %}
 
   {% if introduction_paragraph %}
-  <p>{{ introduction_paragraph }}</p>
+  <div class="intro-paragraph">
+    <p>{{ introduction_paragraph }}</p>
+  </div>
   {% endif %}
 
   {% for post in posts %}

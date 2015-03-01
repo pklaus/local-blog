@@ -13,9 +13,8 @@ import re
 from posts import Posts
 import markdown
 
-TEMPLATE_PATH.append(os.path.join(os.path.split(os.path.realpath(__file__))[0],'views'))
-
 ### Global objects
+TEMPLATE_PATH.append(os.path.join(os.path.split(os.path.realpath(__file__))[0],'views'))
 POSTS = object()
 DEFAULT_CONTEXT = {
   'author': "John Doe",
