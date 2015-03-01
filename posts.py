@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import json
 from datetime import datetime, date
 
 class Posts(object):
@@ -11,12 +12,18 @@ class Posts(object):
     def __init__(self, folder, baselink = 'http://yourblog.com'):
         self.folder = folder
         self.posts = []
+        self.media = []
+        self.media_files = {}
         self.years = []
         self.months = []
         self.baselink = baselink
         for file in os.listdir(folder):
             if file.endswith("." + self.FILE_EXTENSION):
                 self._add_post(file)
+        self.media_folder = os.path.join(folder, 'media')
+        for file in os.listdir(self.media_folder):
+            if file.endswith(".json"):
+                self._add_media(file)
         self.update_collections()
 
     def update_collections(self):
@@ -31,6 +38,20 @@ class Posts(object):
                 self.months.append(month)
         self.years.sort(reverse=True)
         self.months.sort(reverse=True)
+        for media in self.media:
+            filename = os.path.basename(media['path'])
+            self.media_files[filename] = media['path']
+
+    def _add_media(self, filename):
+        full_filename = os.path.join(self.media_folder, filename)
+        with open(full_filename, 'r') as f:
+            media = json.load(f)
+            media['file_present'] = os.path.isfile(os.path.join(self.folder, media['path']))
+            assert media['file_present'] == True
+        self.media.append(media)
+
+    def get_media_path(self, filename):
+        return self.media_files[filename]
 
     def _add_post(self, file):
         post = dict()

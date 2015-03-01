@@ -35,6 +35,13 @@ interface = Bottle()
 def static(path):
     return static_file(path, root='./static')
 
+@interface.route('/wp-content/uploads/<path:path>')
+@interface.route('/assets/<path:path>')
+def static(path):
+    media_path = POSTS.get_media_path(path)
+    if not media_path: abort(404, "No such blog post.")
+    return static_file(media_path, root=POSTS.folder)
+
 @interface.route('/')
 @view('home.jinja2')
 def home():
