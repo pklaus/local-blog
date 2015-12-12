@@ -7,9 +7,20 @@
     <h2 class="blog-post-title">{{ post.title }}</h2>
     <p class="blog-post-meta">
       {{ post.creation_date.strftime("%Y-%m-%d %H:%M") }}
-      {% if post.categories != ['Uncategorized'] %}<br /> Category: {{ post.categories|join(', ') }}{% endif %}
-      {% if post.tags|length %}<br /> Tags: {{ post.tags|join(', ') }}{% endif %}
-      {% if post.link %}<br /> <a href="{{ post.link }}">Upstream Link</a>{% endif %}
+      {% if post.categories != ['Uncategorized'] %}<br />
+        Category:
+          {% for category in post.categories %}
+            <a href="/category/{{category}}">{{ category }}</a>{% if not loop.last %}, {% endif %}
+          {% endfor %}
+      {% endif %}
+      {% if post.tags|length %}
+        <br />
+        Tags:
+          {% for tag in post.tags %}
+            <a href="/tag/{{tag}}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+          {% endfor %}
+      {% endif %}
+      {% if post.link %}<br /> <a href="{{ post.link }}">(Upstream Link)</a>{% endif %}
     </p>
     {{ post.rendered_content }}
   </div>
