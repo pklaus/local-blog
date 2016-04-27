@@ -9,7 +9,7 @@ class Posts(object):
     FILE_EXTENSION = 'mdtxt'
     TIME_FMT = "%Y-%m-%dT%H:%M:%S"
 
-    def __init__(self, folder, baselink = 'http://yourblog.com'):
+    def __init__(self, folder, baselink='http://yourblog.com', media_folder='./media'):
         self.folder = folder
         self.posts = []
         self.media = []
@@ -20,7 +20,7 @@ class Posts(object):
         for file in os.listdir(folder):
             if file.endswith("." + self.FILE_EXTENSION):
                 self._add_post(file)
-        self.media_folder = os.path.join(folder, 'assets')
+        self.media_folder = os.path.join(folder, media_folder)
         for file in os.listdir(self.media_folder):
             if file.endswith(".json"):
                 self._add_media(file)
