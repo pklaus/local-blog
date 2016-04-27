@@ -1,0 +1,4 @@
+beautifulsoup4
+bottle
+jinja2
+cherrypy
