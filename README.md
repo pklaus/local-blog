@@ -15,6 +15,7 @@ You need Python3 and some packages. Get them using:
       --b http://johndoe.wordpress.com \
       -a "John Doe" \
       -t "Local Blog" \
+      --about "John Doe is an IT entrepreneur and young professional with a special interest in blogging" \
       --catchphrase "Your blog, served from your local computer" \
       --external-links Github=https://github.com/johndoe \
       --debug \

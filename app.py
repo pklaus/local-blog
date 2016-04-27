@@ -175,6 +175,7 @@ def main():
       help='The file to store the server log in.')
     parser.add_argument('--allow-crawling', action='store_true', help='Allow search engines to index the site.')
     parser.add_argument('--title', '-t', help='The title of the blog')
+    parser.add_argument('--about', help='Markdown description of the blog or author')
     parser.add_argument('--catchphrase', '-c', help='A catchphrase for the blog')
     parser.add_argument('--author', '-a', help='The name of the author of the blog')
     parser.add_argument('--external-links', '-e', help='Links to external sites of yours. Specify like Github=http://github.com,Twitter=http://twitter.com')
@@ -196,6 +197,9 @@ def main():
         for el in args.external_links.split(','):
             parts = el.split('=')
             DEFAULT_CONTEXT['external_links'].append({'name': parts[0], 'url': parts[1]})
+
+    if args.about:
+        DEFAULT_CONTEXT['about'] = args.about
 
     if args.author: DEFAULT_CONTEXT['author'] = args.author
     if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase
