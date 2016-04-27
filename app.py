@@ -179,6 +179,8 @@ def main():
     parser.add_argument('--catchphrase', '-c', help='A catchphrase for the blog')
     parser.add_argument('--author', '-a', help='The name of the author of the blog')
     parser.add_argument('--external-links', '-e', help='Links to external sites of yours. Specify like Github=http://github.com,Twitter=http://twitter.com')
+    parser.add_argument('--published-only', '-o', action='store_true', help='Restrict the posts shown to those already published.')
+    parser.add_argument('--remove-upstream-links', '-r', action='store_true', help='Remove upstream links from blog posts')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
@@ -190,6 +192,11 @@ def main():
         POSTS = Posts(args.folder, args.baselink)
     else:
         POSTS = Posts(args.folder)
+
+    if args.published_only:
+        POSTS.keep_only_published()
+    if args.remove_upstream_links:
+        POSTS.remove_upstream_links()
 
     DEFAULT_CONTEXT['months'] = POSTS.months
 

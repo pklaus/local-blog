@@ -119,8 +119,15 @@ class Posts(object):
                 newest_post = post
         return newest_post
 
-    def published(self):
-        return [post for post in self.posts if post['status'] == 'publish']
+    def keep_only(self, status_list):
+        self.posts = [post for post in self.posts if post['status'] in status_list]
+
+    def keep_only_published(self):
+        self.keep_only(['publish'])
+
+    def remove_upstream_links(self):
+        for post in self.posts:
+            del post['link']
 
     def total(self):
         return len(self.posts)
@@ -137,8 +144,10 @@ if __name__ == "__main__":
     else:
         posts = Posts(args.local_blog_folder)
     print("This directory contains {} blog posts".format(posts.total()))
-    print("The first 10 published posts:")
-    for post in posts.published()[:10]:
+    posts.keep_only_published()
+    print("The latest 10 published posts:")
+    for post in posts.posts:
         print(post['title'])
         print(post['slug'])
+        print(post['status'])
 
