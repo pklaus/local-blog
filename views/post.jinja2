@@ -22,7 +22,12 @@
       {% endif %}
       {% if post.link %}<br /> <a href="{{ post.link }}">(Upstream Link)</a>{% endif %}
     </p>
-    {{ post.rendered_content }}
+    <div>
+      {{ additional_below_post_heading_html }}
+    </div>
+    <div class="post_content">
+      {{ post.rendered_content }}
+    </div>
   </div>
 {% endblock %}
 

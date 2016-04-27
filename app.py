@@ -26,6 +26,7 @@ DEFAULT_CONTEXT = {
   'external_links': [],
   'active': '',
   'additional_header_html': '',
+  'additional_below_post_heading_html': '',
 }
 ALLOW_CRAWLING = 'Disallow'
 MD_EXTENSIONS = [
@@ -188,6 +189,7 @@ def main():
     parser.add_argument('--catchphrase', '-c', help='A catchphrase for the blog')
     parser.add_argument('--author', '-a', help='The name of the author of the blog')
     parser.add_argument('--additional-header-html', help='Additional HTML content to be added to the header of each page')
+    parser.add_argument('--additional-below-post-heading-html', help='Additional HTML content to be added below the heading of each post')
     parser.add_argument('--external-links', '-e', help='Links to external sites of yours. Specify like Github=http://github.com,Twitter=http://twitter.com')
     parser.add_argument('--published-only', '-o', action='store_true', help='Restrict the posts shown to those already published.')
     parser.add_argument('--remove-upstream-links', '-r', action='store_true', help='Remove upstream links from blog posts')
@@ -220,6 +222,9 @@ def main():
 
     if args.additional_header_html:
         DEFAULT_CONTEXT['additional_header_html'] = args.additional_header_html
+
+    if args.additional_below_post_heading_html:
+        DEFAULT_CONTEXT['additional_below_post_heading_html'] = args.additional_below_post_heading_html
 
     if args.author: DEFAULT_CONTEXT['author'] = args.author
     if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase
