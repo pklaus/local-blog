@@ -20,7 +20,7 @@ class Posts(object):
         for file in os.listdir(folder):
             if file.endswith("." + self.FILE_EXTENSION):
                 self._add_post(file)
-        self.media_folder = os.path.join(folder, 'media')
+        self.media_folder = os.path.join(folder, 'assets')
         for file in os.listdir(self.media_folder):
             if file.endswith(".json"):
                 self._add_media(file)
