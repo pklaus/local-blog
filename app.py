@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# internal dependencies
+from posts import Posts
+
+# external dependencies
 from bottle import Bottle, route, run, post, get, request, response, redirect, error, abort, static_file, TEMPLATE_PATH, Jinja2Template, url
 from bottle import jinja2_template as template, jinja2_view as view
-import json
-import time
-import os
-import pprint
-from datetime import datetime
-import string
-import re
-from posts import Posts
 import markdown
+
+# stdlib dependencies
+import json, time, os, pprint, string, re
+from datetime import datetime
 
 ### Global objects
 TEMPLATE_PATH.append(os.path.join(os.path.split(os.path.realpath(__file__))[0],'views'))

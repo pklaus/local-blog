@@ -1,0 +1,28 @@
+/* http://stackoverflow.com/questions/10374171/how-to-make-twitter-bootstraps-pre-blocks-scroll-horizontally */
+.pre-x-scrollable {
+    overflow: auto;
+    -ms-word-wrap: normal;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+    /* own additions */
+    /*width: 100%;*/
+    /*max-width: 60%;*/
+}
+
+/* http://www.jquery2dotnet.com/2013/09/pre-tag-with-line-numbers-using-css3.html */
+
+.codehilite pre {
+    counter-reset: line-numbering;
+    /*font-family: Menlo, Monaco, monospace;
+    word-break: break-word;*/
+}
+.codehilite pre .line::before {
+    content: counter(line-numbering);
+    counter-increment: line-numbering;
+    padding-right: 1em;
+    /* space after numbers */
+    width: 1.5em;
+    text-align: right;
+    opacity: 0.5;
+}
