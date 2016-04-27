@@ -43,6 +43,9 @@ def static(path):
 @interface.route('/wp-content/uploads/<path:path>')
 @interface.route('/assets/<path:path>')
 def static(path):
+    match = re.match(r".*(?P<thumb>-(?P<sizex>\d+)x(?P<sizey>\d+))\..*", path)
+    if match:
+        path = path.replace(match.group('thumb'), '')
     media_path = POSTS.get_media_path(path)
     if not media_path: abort(404, "No such blog post.")
     return static_file(media_path, root=POSTS.folder)
