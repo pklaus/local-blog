@@ -135,7 +135,7 @@ class Posts(object):
         return len(self.posts)
 
 if __name__ == "__main__":
-    import argparse
+    import argparse, pprint, random
     parser = argparse.ArgumentParser(description='Testing the posts module')
     parser.add_argument('local_blog_folder', help='Folder containing the blog posts')
     parser.add_argument('--baselink', '-b', help='Baselink of your blog, like http://philipp.wordpress.com')
@@ -145,11 +145,15 @@ if __name__ == "__main__":
         posts = Posts(args.local_blog_folder, args.baselink)
     else:
         posts = Posts(args.local_blog_folder)
+
     print("This directory contains {} blog posts".format(posts.total()))
+
+    print("Media files found (random selection of 10):")
+    keys = random.sample(list(posts.media_files), 10)
+    print(pprint.pformat({key: posts.media_files[key] for key in keys}))
+
     posts.keep_only_published()
     print("The latest 10 published posts:")
-    for post in posts.posts:
-        print(post['title'])
-        print(post['slug'])
-        print(post['status'])
+    for post in posts.posts[-10:]:
+        print("Title: {title}, slug: {slug}, status: {status}".format(**post))
 
