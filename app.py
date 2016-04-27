@@ -33,7 +33,7 @@ MD_EXTENSIONS = [
   'markdown.extensions.codehilite(linenums=False)'
 ]
 
-### The Bottle() web application
+### The Bottle web application
 interface = Bottle()
 
 @interface.route('/static/<path:path>')
