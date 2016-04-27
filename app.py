@@ -7,6 +7,7 @@ from posts import Posts
 # external dependencies
 from bottle import Bottle, route, run, post, get, request, response, redirect, error, abort, static_file, TEMPLATE_PATH, Jinja2Template, url
 from bottle import jinja2_template as template, jinja2_view as view
+from bs4 import BeautifulSoup
 import markdown
 
 # stdlib dependencies
@@ -134,7 +135,8 @@ def post_from_link(year, month, slug):
     result = [post for post in POSTS.posts if post['year'] == year and post['month'] == month and post['slug'] == slug]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=['markdown.extensions.tables', 'markdown.extensions.codehilite'])
+        post['rendered_content'] = markdown.markdown(post['content'], extensions=['markdown.extensions.tables', 'markdown.extensions.codehilite(linenums=False)'])
+        post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -149,6 +151,14 @@ class StripPathMiddleware(object):
   def __call__(self, e, h):
     e['PATH_INFO'] = e['PATH_INFO'].rstrip('/')
     return self.app(e,h)
+
+def add_scrollable_to_pre(html_text):
+    soup = BeautifulSoup(html_text, 'html.parser')
+    pres = soup.select('.codehilite pre')
+    for pre in pres:
+        pre['class'] = 'pre-x-scrollable'
+    return str(soup)
+
 
 def main():
     global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING
