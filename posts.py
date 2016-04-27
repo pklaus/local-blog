@@ -121,6 +121,7 @@ class Posts(object):
 
     def keep_only(self, status_list):
         self.posts = [post for post in self.posts if post['status'] in status_list]
+        self.update_collections()
 
     def keep_only_published(self):
         self.keep_only(['publish'])
@@ -128,6 +129,7 @@ class Posts(object):
     def remove_upstream_links(self):
         for post in self.posts:
             del post['link']
+        self.update_collections()
 
     def total(self):
         return len(self.posts)
