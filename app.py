@@ -98,7 +98,7 @@ def categorylist():
     for post in POSTS.posts:
         categories += post['categories']
     unique_categories = set(categories)
-    unique_categories.remove('Uncategorized')
+    if 'Uncategorized' in unique_categories: unique_categories.remove('Uncategorized')
     for category in unique_categories:
         ret_list.append({'name': category, 'occurrence': categories.count(category)})
     ret_list = sorted(ret_list, key=lambda k: k['occurrence'], reverse=True)

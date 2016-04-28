@@ -63,7 +63,9 @@ class Posts(object):
         assert header[0].startswith('# ')
         title = header[0][2:]
         assert header[2].startswith('* Categories: ')
-        categories = header[2][14:].split(', ')
+        categories = set(header[2][14:].split(', '))
+        if 'Uncategorized' in categories: categories.remove('Uncategorized')
+        categories = list(categories)
         if categories == ['']: categories = []
         assert header[3].startswith('* Tags: ')
         tags = header[3][8:].split(', ')
