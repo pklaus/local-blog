@@ -43,7 +43,7 @@
 
     <div class="container">
 
-      {% if ua.is_pc %}
+      {% if ua.is_pc or ua.is_tablet %}
       <div class="col-sm-12">
         {{ additional_leaderboard_html }}
       </div>

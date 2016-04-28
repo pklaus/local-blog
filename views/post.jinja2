@@ -23,7 +23,9 @@
       {% if post.link %}<br /> <a href="{{ post.link }}">(Upstream Link)</a>{% endif %}
     </p>
     <div>
+      {% if ua.is_mobile or ua.is_tablet %}
       {{ additional_below_post_heading_html }}
+      {% endif %}
     </div>
     <div class="post_content">
       {{ post.rendered_content }}
