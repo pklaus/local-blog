@@ -2,3 +2,6 @@ beautifulsoup4
 bottle
 jinja2
 cherrypy
+user-agents
+pyyaml
+ua-parser

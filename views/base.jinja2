@@ -43,6 +43,11 @@
 
     <div class="container">
 
+      {% if ua.is_pc %}
+      <div class="col-sm-12">
+        {{ additional_leaderboard_html }}
+      </div>
+      {% endif %}
       <div class="blog-header">
         <h1 class="blog-title">{{ blog_title }}</h1>
         <p class="lead blog-description">{{ catchphrase or "Your blog served locally." }}</p>
@@ -50,11 +55,6 @@
 
 
       <div class="row">
-
-        <div class="col-sm-12 blog-main">
-        {{ additional_leaderboard_html }}
-        </div>
-
         <div class="col-sm-8 blog-main">
           {% block content %}{% endblock %}
         </div><!-- /.blog-main -->

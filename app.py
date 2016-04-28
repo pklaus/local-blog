@@ -9,6 +9,7 @@ from bottle import Bottle, route, run, post, get, request, response, redirect, e
 from bottle import jinja2_template as template, jinja2_view as view
 from bs4 import BeautifulSoup
 import markdown
+import user_agents
 
 # stdlib dependencies
 import json, time, os, pprint, string, re
@@ -25,6 +26,7 @@ DEFAULT_CONTEXT = {
   'months': [],
   'external_links': [],
   'active': '',
+  'ua': user_agents.parse(''),
   'additional_header_html': '',
   'additional_below_post_heading_html': '',
   'additional_leaderboard_html': '',
@@ -155,6 +157,14 @@ def post_from_link(year, month, slug):
 def robots():
     response.content_type = 'text/plain'
     return "User-agent: *\n{0}: /".format(ALLOW_CRAWLING)
+
+
+@interface.hook('before_request')
+def set_ua():
+    ua_string = request.environ.get('HTTP_USER_AGENT')
+    ua = user_agents.parse(ua_string)
+    Jinja2Template.defaults['ua'] = ua
+
 
 class StripPathMiddleware(object):
   def __init__(self, app):
