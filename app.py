@@ -229,7 +229,7 @@ def main():
         DEFAULT_CONTEXT['additional_below_post_heading_html'] = args.additional_below_post_heading_html
 
     if args.additional_leaderboard_html:
-        DEFAULT_CONTEXT['additional_leaderboard_html'] = args.additional_below_post_heading_html
+        DEFAULT_CONTEXT['additional_leaderboard_html'] = args.additional_leaderboard_html
 
     if args.author: DEFAULT_CONTEXT['author'] = args.author
     if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase
