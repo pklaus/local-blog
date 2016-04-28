@@ -27,3 +27,13 @@
     opacity: 0.5;
     display: inline-block;
 }
+
+/* leaderboard */
+.leaderboard-container {
+    padding-top: 2ex;
+}
+
+.blog-header {
+    padding-top: 0;
+    padding-bottom: 5px;
+}
