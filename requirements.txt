@@ -1,6 +1,7 @@
 beautifulsoup4
 bottle
 jinja2
+pygments
 cherrypy
 user-agents
 pyyaml
