@@ -66,7 +66,14 @@
             <h4>Archives</h4>
             <ol class="list-unstyled">
               {% for month in months %}
-              <li><a href="/{{ month.strftime('%Y/%m') }}/">{{ month.strftime('%B %Y') }}</a></li>
+                {% if loop.index == 5 %}
+                <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#archive-more">
+                  more...
+                </button>
+                <div id="archive-more" class="collapse">
+                {% endif %}
+                <li><a href="/{{ month.strftime('%Y/%m') }}/">{{ month.strftime('%B %Y') }}</a></li>
+                {% if loop.last %}</div>{% endif %}
               {% endfor %}
             </ol>
           </div>
