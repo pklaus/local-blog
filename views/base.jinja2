@@ -71,7 +71,7 @@
             <ol class="list-unstyled">
               {% for month in months %}
                 {% if loop.index == 5 %}
-                <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#archive-more">
+                <button id="archive-more-button" class="btn btn-default btn-sm collapse in" data-toggle="collapse" data-target="#archive-more,#archive-more-button">
                   more...
                 </button>
                 <div id="archive-more" class="collapse">
