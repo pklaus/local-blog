@@ -141,7 +141,7 @@ def post_from_filename(status, file):
     result = [post for post in POSTS.posts if post['status'] == status and post['file'] == file]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS, tab_length=2)
+        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -151,7 +151,7 @@ def post_from_link(year, month, slug):
     result = [post for post in POSTS.posts if post['year'] == year and post['month'] == month and post['slug'] == slug]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS, tab_length=2)
+        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
         post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
