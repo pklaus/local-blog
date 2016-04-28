@@ -30,6 +30,7 @@ DEFAULT_CONTEXT = {
   'additional_header_html': '',
   'additional_below_post_heading_html': '',
   'additional_leaderboard_html': '',
+  'favicon': None,
 }
 ALLOW_CRAWLING = 'Disallow'
 MD_EXTENSIONS = [
@@ -37,6 +38,7 @@ MD_EXTENSIONS = [
   'markdown.extensions.tables',
   'markdown.extensions.codehilite(linenums=False)'
 ]
+FAVICON = None # 2-tuple containing path and filename of the favicon to serve
 
 ### The Bottle web application
 interface = Bottle()
@@ -158,6 +160,14 @@ def robots():
     response.content_type = 'text/plain'
     return "User-agent: *\n{0}: /".format(ALLOW_CRAWLING)
 
+@interface.route('/favicon.ico')
+def get_favicon():
+    if FAVICON:
+        path, filename = FAVICON
+        return static_file(filename, root=path)
+    else:
+        abort(404, "No favicon set")
+
 
 @interface.hook('before_request')
 def set_ua():
@@ -182,7 +192,7 @@ def add_scrollable_to_pre(html_text):
 
 
 def main():
-    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING
+    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON
     import argparse
     parser = argparse.ArgumentParser( 
       description='Run a local blog.' )
@@ -205,6 +215,7 @@ def main():
     parser.add_argument('--external-links', '-e', help='Links to external sites of yours. Specify like Github=http://github.com,Twitter=http://twitter.com')
     parser.add_argument('--published-only', '-o', action='store_true', help='Restrict the posts shown to those already published.')
     parser.add_argument('--remove-upstream-links', '-r', action='store_true', help='Remove upstream links from blog posts')
+    parser.add_argument('--favicon', help='favicon image file')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
@@ -228,6 +239,10 @@ def main():
         for el in args.external_links.split(','):
             parts = el.split('=')
             DEFAULT_CONTEXT['external_links'].append({'name': parts[0], 'url': parts[1]})
+
+    if args.favicon:
+        FAVICON = os.path.split(args.favicon)
+        DEFAULT_CONTEXT['favicon'] = '/favicon.ico'
 
     if args.about:
         DEFAULT_CONTEXT['about'] = args.about
