@@ -36,8 +36,9 @@ ALLOW_CRAWLING = 'Disallow'
 MD_EXTENSIONS = [
   'markdown.extensions.abbr',
   'markdown.extensions.tables',
-  'markdown.extensions.codehilite(linenums=False)'
+  'markdown.extensions.codehilite'
 ]
+MD_EXT_CONFIGS = { 'markdown.extensions.codehilite': { 'linenums': False, }, }
 FAVICON = None # 2-tuple containing path and filename of the favicon to serve
 
 ### The Bottle web application
@@ -140,7 +141,7 @@ def post_from_filename(status, file):
     result = [post for post in POSTS.posts if post['status'] == status and post['file'] == file]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS)
+        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -150,7 +151,7 @@ def post_from_link(year, month, slug):
     result = [post for post in POSTS.posts if post['year'] == year and post['month'] == month and post['slug'] == slug]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS)
+        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
         post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
