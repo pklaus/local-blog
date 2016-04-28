@@ -22,7 +22,8 @@
     counter-increment: line-numbering;
     padding-right: 1em;
     /* space after numbers */
-    width: 1.5em;
+    width: 2.5em;
     text-align: right;
     opacity: 0.5;
+    display: inline-block;
 }
