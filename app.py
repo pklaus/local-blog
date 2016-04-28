@@ -171,7 +171,7 @@ def get_favicon():
 
 @interface.hook('before_request')
 def set_ua():
-    ua_string = request.environ.get('HTTP_USER_AGENT')
+    ua_string = request.environ.get('HTTP_USER_AGENT', '')
     ua = user_agents.parse(ua_string)
     Jinja2Template.defaults['ua'] = ua
 
