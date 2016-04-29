@@ -37,3 +37,8 @@
     padding-top: 0;
     padding-bottom: 5px;
 }
+
+h1.blog-title a {
+    color: inherit;
+    text-decoration: inherit;
+}
