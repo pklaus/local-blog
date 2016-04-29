@@ -3,6 +3,9 @@
 import os
 import json
 from datetime import datetime, date
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Posts(object):
 
@@ -19,7 +22,11 @@ class Posts(object):
         self.baselink = baselink
         for file in os.listdir(folder):
             if file.endswith("." + self.FILE_EXTENSION):
-                self._add_post(file)
+                try:
+                    self._add_post(file)
+                except Exception as e:
+                    logger.warn('Could not add the post %s for the following reason:', file)
+                    logger.warn(str(e))
         self.media_folder = os.path.join(folder, media_folder)
         for file in os.listdir(self.media_folder):
             if file.endswith(".json"):
