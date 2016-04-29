@@ -142,6 +142,8 @@ def post_from_filename(status, file):
     if len(result) == 1:
         post = result[0]
         post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
+        post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
+        post['rendered_content'] = add_bootstrap_table_style(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -153,6 +155,7 @@ def post_from_link(year, month, slug):
         post = result[0]
         post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
         post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
+        post['rendered_content'] = add_bootstrap_table_style(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -189,6 +192,13 @@ def add_scrollable_to_pre(html_text):
     pres = soup.select('.codehilite pre')
     for pre in pres:
         pre['class'] = 'pre-x-scrollable'
+    return str(soup)
+
+def add_bootstrap_table_style(html_text):
+    soup = BeautifulSoup(html_text, 'html.parser')
+    tables = soup.select('table')
+    for table in tables:
+        table['class'] = 'table table-striped'
     return str(soup)
 
 

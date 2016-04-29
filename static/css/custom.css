@@ -48,3 +48,14 @@ h1.blog-title a {
     color: inherit;
     text-decoration: inherit;
 }
+
+/* tables in the post: smaller font size */
+.blog-post table td, .blog-post table th {
+    font-size: 80%;
+    padding: 2px;
+}
+.blog-post table {
+  margin-top: 2ex;
+  margin-bottom: 2ex;
+  padding: 1px;
+}
