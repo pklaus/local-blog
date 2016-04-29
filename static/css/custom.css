@@ -33,11 +33,17 @@
     padding-top: 2ex;
 }
 
+/* blog header spacing */
 .blog-header {
-    padding-top: 0;
-    padding-bottom: 5px;
+    padding-top: .5ex;
+    padding-bottom: .5ex;
 }
 
+h1.blog-title {
+    margin-top: 0;
+}
+
+/* blog title link styling */
 h1.blog-title a {
     color: inherit;
     text-decoration: inherit;
