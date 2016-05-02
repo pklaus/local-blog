@@ -47,6 +47,7 @@ h1.blog-title {
 h1.blog-title a {
     color: inherit;
     text-decoration: inherit;
+    font-size: 54px;
 }
 
 /* tables in the post: smaller font size */
@@ -69,8 +70,8 @@ h1.blog-title a {
   padding-bottom: 0px;
 }
 
-.sidebar-module {
-  margin-top: 25px;
+.blog-sidebar {
+  margin-top: 13px;
 }
 
 
