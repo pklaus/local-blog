@@ -66,6 +66,21 @@
             <p>{{ about }}</p>
           </div>
           {% endif %}
+          {% if external_links %}
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              {% for link in external_links %}
+              <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+              {% endfor %}
+            </ol>
+          </div>
+          {% endif %}
+          {% if ua.is_pc and additional_sidebar_html %}
+          <div class="sidebar-additional">
+            {{ additional_sidebar_html }}
+          </div>
+          {% endif %}
           <div class="sidebar-module">
             <h4>Archives</h4>
             <ol class="list-unstyled">
@@ -81,16 +96,6 @@
               {% endfor %}
             </ol>
           </div>
-          {% if external_links %}
-          <div class="sidebar-module">
-            <h4>Elsewhere</h4>
-            <ol class="list-unstyled">
-              {% for link in external_links %}
-              <li><a href="{{ link.url }}">{{ link.name }}</a></li>
-              {% endfor %}
-            </ol>
-          </div>
-          {% endif %}
         </div><!-- /.blog-sidebar -->
 
       </div><!-- /.row -->
