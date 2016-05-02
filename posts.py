@@ -85,6 +85,7 @@ class Posts(object):
         self.update_collections()
 
     def update_collections(self):
+        self.posts.sort(key=lambda post: post['creation_date'], reverse=True)
         del self.years[:]
         del self.months[:]
         for post in self.posts:
