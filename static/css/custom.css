@@ -50,6 +50,19 @@ h1.blog-title a {
     font-size: 54px;
 }
 
+h2.list-title {
+    font-size: 130%;
+    text-align: center;
+    color: #666;
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666;
+    margin: 20px auto;
+}
+
+h2.blog-post-title {
+    font-size: 200%;
+}
+
 /* tables in the post: smaller font size */
 .blog-post table td, .blog-post table th {
     font-size: 80%;

@@ -7,6 +7,9 @@
   {% block content_begin %}
   {% endblock %}
 
+  {% if list_title %}
+  <h2 class="list-title">{{ list_title }}</h2>
+  {% endif %}
   {% if introduction_paragraph %}
   <div class="intro-paragraph">
     <p>{{ introduction_paragraph }}</p>
