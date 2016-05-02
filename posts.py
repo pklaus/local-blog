@@ -35,7 +35,7 @@ def add_bootstrap_table_style(html_text):
     return str(soup)
 
 def truncate_html(html, words):
-    return str(BeautifulSoup(' '.join(html.split()[:words]) + '...', "html.parser"))
+    return str(BeautifulSoup(' '.join(html.split(' ')[:words]) + '...', "html.parser"))
 
 
 class Post(dict):
