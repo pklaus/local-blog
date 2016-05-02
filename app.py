@@ -56,9 +56,11 @@ def static(path):
     return static_file(media_path, root=POSTS.folder)
 
 @interface.route('/')
-@view('home.jinja2')
+@view('list_posts.jinja2')
 def home():
-    return dict(active='home')
+    list_title = 'The latest posts'
+    posts = POSTS.posts[:8]
+    return dict(active='home', posts=posts, list_title=list_title)
 
 @interface.route('/tag/<tag>')
 @view('list_posts.jinja2')
