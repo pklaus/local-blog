@@ -18,7 +18,7 @@
 
   {% for post in posts %}
   <div class="blog-post">
-    <h2 class="blog-post-title">{{ post.title }}</h2>
+    <h2 class="blog-post-title"><a class="headline-link" href="{{ post.address or '/post/{status}/{file}'.format(**post) }}">{{ post.title }}</a></h2>
     <p class="blog-post-meta">
     <p class="blog-post-meta">
       {{ post.creation_date.strftime("%Y-%m-%d %H:%M") }}

@@ -40,14 +40,14 @@
 }
 
 h1.blog-title {
+    font-size: 54px;
     margin-top: 0;
 }
 
-/* blog title link styling */
-h1.blog-title a {
+/* headline link styling */
+a.headline-link {
     color: inherit;
     text-decoration: inherit;
-    font-size: 54px;
 }
 
 h2.list-title {
