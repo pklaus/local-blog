@@ -8,7 +8,6 @@ from posts import Posts
 from bottle import Bottle, route, run, post, get, request, response, redirect, error, abort, static_file, TEMPLATE_PATH, Jinja2Template, url
 from bottle import jinja2_template as template, jinja2_view as view
 from bs4 import BeautifulSoup
-import markdown
 import user_agents
 
 # stdlib dependencies
@@ -36,12 +35,6 @@ DEFAULT_CONTEXT = {
   'favicon': None,
 }
 ALLOW_CRAWLING = 'Disallow'
-MD_EXTENSIONS = [
-  'markdown.extensions.abbr',
-  'markdown.extensions.tables',
-  'markdown.extensions.codehilite'
-]
-MD_EXT_CONFIGS = { 'markdown.extensions.codehilite': { 'linenums': False, }, }
 FAVICON = None # 2-tuple containing path and filename of the favicon to serve
 EXPERIMENT_PROBABILITY = 0.01
 
@@ -145,9 +138,6 @@ def post_from_filename(status, file):
     result = [post for post in POSTS.posts if post['status'] == status and post['file'] == file]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
-        post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
-        post['rendered_content'] = add_bootstrap_table_style(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -157,9 +147,6 @@ def post_from_link(year, month, slug):
     result = [post for post in POSTS.posts if post['year'] == year and post['month'] == month and post['slug'] == slug]
     if len(result) == 1:
         post = result[0]
-        post['rendered_content'] = markdown.markdown(post['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
-        post['rendered_content'] = add_scrollable_to_pre(post['rendered_content'])
-        post['rendered_content'] = add_bootstrap_table_style(post['rendered_content'])
         return dict(post=result[0])
     else: abort(404, "No such blog post.")
 
@@ -191,20 +178,6 @@ class StripPathMiddleware(object):
   def __call__(self, e, h):
     e['PATH_INFO'] = e['PATH_INFO'].rstrip('/')
     return self.app(e,h)
-
-def add_scrollable_to_pre(html_text):
-    soup = BeautifulSoup(html_text, 'html.parser')
-    pres = soup.select('.codehilite pre')
-    for pre in pres:
-        pre['class'] = 'pre-x-scrollable'
-    return str(soup)
-
-def add_bootstrap_table_style(html_text):
-    soup = BeautifulSoup(html_text, 'html.parser')
-    tables = soup.select('table')
-    for table in tables:
-        table['class'] = 'table table-striped'
-    return str(soup)
 
 
 def main():

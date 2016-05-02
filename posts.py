@@ -5,7 +5,58 @@ import json
 from datetime import datetime, date
 import logging
 
+from bs4 import BeautifulSoup
+from markdown import markdown
+
 logger = logging.getLogger(__name__)
+
+MD_EXTENSIONS = [
+  'markdown.extensions.abbr',
+  'markdown.extensions.tables',
+  'markdown.extensions.codehilite'
+]
+MD_EXT_CONFIGS = {
+  'markdown.extensions.codehilite': { 'linenums': False, },
+}
+
+
+def add_scrollable_to_pre(html_text):
+    soup = BeautifulSoup(html_text, 'html.parser')
+    pres = soup.select('.codehilite pre')
+    for pre in pres:
+        pre['class'] = 'pre-x-scrollable'
+    return str(soup)
+
+def add_bootstrap_table_style(html_text):
+    soup = BeautifulSoup(html_text, 'html.parser')
+    tables = soup.select('table')
+    for table in tables:
+        table['class'] = 'table table-striped'
+    return str(soup)
+
+def truncate_html(html, words):
+    return str(BeautifulSoup(' '.join(html.split()[:words]) + '...', "html.parser"))
+
+
+class Post(dict):
+
+    @property
+    def rendered_content(self):
+        self.render()
+        return self['_rendered_content']
+
+    @property
+    def rendered_preview(self):
+        self.render()
+        return self['_rendered_preview']
+
+    def render(self):
+        if '_rendered_content' not in self or '_rendered_preview' not in self:
+            rendered_content = markdown(self['content'], extensions=MD_EXTENSIONS, extension_configs=MD_EXT_CONFIGS)
+            rendered_content = add_scrollable_to_pre(rendered_content)
+            rendered_content = add_bootstrap_table_style(rendered_content)
+            self['_rendered_content'] = rendered_content
+            self['_rendered_preview'] = truncate_html(rendered_content, 50)
 
 class Posts(object):
 
@@ -61,7 +112,7 @@ class Posts(object):
         return self.media_files[filename]
 
     def _add_post(self, file):
-        post = dict()
+        post = Post()
         filecontent = open(os.path.join(self.folder, file), 'r').read()
         parts = filecontent.split("\n\n### Content\n\n")
         header = parts[0]
