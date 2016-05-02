@@ -59,3 +59,29 @@ h1.blog-title a {
   margin-bottom: 2ex;
   padding: 1px;
 }
+
+.blog-main-area {
+  padding-top: 5px;
+}
+
+.blog-header {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.sidebar-module {
+  margin-top: 25px;
+}
+
+
+@media (min-width: 992px) {
+  .container {
+    width: 980px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1070px;
+  }
+}

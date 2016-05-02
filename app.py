@@ -12,7 +12,7 @@ import markdown
 import user_agents
 
 # stdlib dependencies
-import json, time, os, pprint, string, re
+import json, time, os, pprint, string, re, random
 from datetime import datetime
 
 ### Global objects
@@ -31,6 +31,8 @@ DEFAULT_CONTEXT = {
   'additional_below_post_heading_html': '',
   'additional_leaderboard_html': '',
   'additional_sidebar_html': '',
+  'show_experiment': False,
+  'experiment_html': '',
   'favicon': None,
 }
 ALLOW_CRAWLING = 'Disallow'
@@ -41,6 +43,7 @@ MD_EXTENSIONS = [
 ]
 MD_EXT_CONFIGS = { 'markdown.extensions.codehilite': { 'linenums': False, }, }
 FAVICON = None # 2-tuple containing path and filename of the favicon to serve
+EXPERIMENT_PROBABILITY = 0.01
 
 ### The Bottle web application
 interface = Bottle()
@@ -179,6 +182,7 @@ def set_ua():
     ua_string = request.environ.get('HTTP_USER_AGENT', '')
     ua = user_agents.parse(ua_string)
     Jinja2Template.defaults['ua'] = ua
+    Jinja2Template.defaults['show_experiment'] = random.random() < EXPERIMENT_PROBABILITY
 
 
 class StripPathMiddleware(object):
@@ -204,7 +208,7 @@ def add_bootstrap_table_style(html_text):
 
 
 def main():
-    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON
+    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON, EXPERIMENT_PROBABILITY
     import argparse
     parser = argparse.ArgumentParser( 
       description='Run a local blog.' )
@@ -229,6 +233,8 @@ def main():
     parser.add_argument('--published-only', '-o', action='store_true', help='Restrict the posts shown to those already published.')
     parser.add_argument('--remove-upstream-links', '-r', action='store_true', help='Remove upstream links from blog posts')
     parser.add_argument('--favicon', help='favicon image file')
+    parser.add_argument('--experiment-probability', type=float, help='Set a probability for showing an experiment (instead of the additional HTML in the leaderboard)')
+    parser.add_argument('--experiment-html', help='HTML content to show if the experiment is carried out. Will show instead of leaderboard')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
@@ -256,6 +262,12 @@ def main():
     if args.favicon:
         FAVICON = os.path.split(args.favicon)
         DEFAULT_CONTEXT['favicon'] = '/favicon.ico'
+
+    if args.experiment_probability:
+        clamp = lambda n, minn, maxn: max(min(maxn, n), minn)
+        EXPERIMENT_PROBABILITY = clamp(args.experiment_probability, 0., 1.)
+    if args.experiment_html:
+        DEFAULT_CONTEXT['experiment_html'] = args.experiment_html
 
     if args.about:
         DEFAULT_CONTEXT['about'] = args.about
