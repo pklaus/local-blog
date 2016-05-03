@@ -1,6 +1,6 @@
 {% extends "list_posts.jinja2" %}
 
-{% block page_title %}Search for {{ search_phrase or "words in this blog" }}{% endblock %}
+{% block page_title %}Search for {{ search_phrase or "words in this blog" }} | {{ blog_title }}{% endblock %}
 
 {% block content_begin %}
   Search blog posts:
