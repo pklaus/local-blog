@@ -1,5 +1,10 @@
 {% extends "base.jinja2" %}
 
+{% set meta_description = post.rendered_preview|striptags %}
+{% set meta_date        = post.creation_date.strftime("%Y-%m-%dT%H:%M:%S+00:00") %}
+{% set meta_revised     = post.modification_date.strftime("%Y-%m-%d %H:%M") %}
+{% set meta_copyright   = meta_copyright + ' ' + post.creation_date.date()|string %}
+
 {% block page_title %}{{ post.title }} | {{ blog_title }}{% endblock %}
 
 {% block content %}

@@ -33,6 +33,8 @@ DEFAULT_CONTEXT = {
   'show_experiment': False,
   'experiment_html': '',
   'favicon': None,
+  'meta_author': None,
+  'meta_copyright': None,
 }
 ALLOW_CRAWLING = 'Disallow'
 FAVICON = None # 2-tuple containing path and filename of the favicon to serve
@@ -210,6 +212,7 @@ def main():
     parser.add_argument('--favicon', help='favicon image file')
     parser.add_argument('--experiment-probability', type=float, help='Set a probability for showing an experiment (instead of the additional HTML in the leaderboard)')
     parser.add_argument('--experiment-html', help='HTML content to show if the experiment is carried out. Will show instead of leaderboard')
+    parser.add_argument('--copyright', default="Copyright (c)", help='Copyright statement')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('folder', help='The folder of blog entries.')
@@ -244,6 +247,9 @@ def main():
     if args.experiment_html:
         DEFAULT_CONTEXT['experiment_html'] = args.experiment_html
 
+    if args.copyright:
+        DEFAULT_CONTEXT['meta_copyright'] = args.copyright
+
     if args.about:
         DEFAULT_CONTEXT['about'] = args.about
 
@@ -259,9 +265,14 @@ def main():
     if args.additional_sidebar_html:
         DEFAULT_CONTEXT['additional_sidebar_html'] = args.additional_sidebar_html
 
-    if args.author: DEFAULT_CONTEXT['author'] = args.author
+    if args.author:
+        DEFAULT_CONTEXT['author'] = args.author
+        DEFAULT_CONTEXT['meta_author'] = args.author
+
     if args.catchphrase: DEFAULT_CONTEXT['catchphrase'] = args.catchphrase
+
     if args.title : DEFAULT_CONTEXT['blog_title'] = args.title
+
     Jinja2Template.defaults = DEFAULT_CONTEXT
 
     app = StripPathMiddleware(interface)

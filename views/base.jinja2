@@ -5,8 +5,22 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    {% if meta_description is defined and meta_description%}
+      <meta name="description" content="{{ meta_description }}">
+    {% endif %}
+    {% if meta_author is defined and meta_author %}
+      <meta name="author" content="{{ meta_author }}">
+    {% endif %}
+    {% if meta_date is defined and meta_date %}
+      <meta name="date" content="{{ meta_date }}">
+    {% endif %}
+    {% if meta_revised is defined and meta_revised %}
+      <meta name="revised" content="{{ meta_revised }}">
+    {% endif %}
+    {% if meta_copyright is defined and meta_copyright %}
+      <meta name="copyright" content="{{ meta_copyright }}">
+    {% endif %}
+    <!-- more: og:title og:url og:description article:published_time article:modified_time article:author og:site_name og:image -->
     {% if favicon %}<link rel="shortcut icon" href="{{ favicon }}">{% endif %}
 
     <title>{% block page_title %}Local-Blog{% endblock %}</title>
