@@ -164,11 +164,16 @@ class Posts(object):
         self.posts.append(post)
 
     def search_literally(self, search_phrase):
-        results = []
+        search_phrase = search_phrase.lower()
+        literal_results = []
+        all_words_contained_results = []
         for post in self.posts:
-            if search_phrase in post['filecontent']:
-                results.append(post)
-        return results
+            post_text = post['filecontent'].lower()
+            if search_phrase in post_text:
+                literal_results.append(post)
+            elif all(word in post_text for word in search_phrase.split()):
+                all_words_contained_results.append(post)
+        return literal_results + all_words_contained_results
 
     @property
     def latest(self):
