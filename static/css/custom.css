@@ -10,6 +10,10 @@
     /*max-width: 60%;*/
 }
 
+code {
+    font-size: 16px;
+}
+
 /* http://www.jquery2dotnet.com/2013/09/pre-tag-with-line-numbers-using-css3.html */
 
 .codehilite pre {
