@@ -7,3 +7,4 @@ cherrypy
 user-agents
 pyyaml
 ua-parser
+python-markdown-math

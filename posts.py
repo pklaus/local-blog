@@ -14,10 +14,12 @@ TIME_FMT = "%Y-%m-%d %H:%M:%S"
 MD_EXTENSIONS = [
   'markdown.extensions.abbr',
   'markdown.extensions.tables',
-  'markdown.extensions.codehilite'
+  'markdown.extensions.codehilite',
+  'mdx_math',
 ]
 MD_EXT_CONFIGS = {
   'markdown.extensions.codehilite': { 'linenums': False, },
+  'mdx_math':   { 'enable_dollar_delimiter': True, },
 }
 
 def add_scrollable_to_pre(html_text):
