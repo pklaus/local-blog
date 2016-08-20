@@ -17,6 +17,7 @@ from datetime import datetime
 ### Global objects
 TEMPLATE_PATH.append(os.path.join(os.path.split(os.path.realpath(__file__))[0],'views'))
 POSTS = object()
+BASELINK = None
 DEFAULT_CONTEXT = {
   'author': "John Doe",
   'blog_title': "Local Blog",
@@ -81,12 +82,10 @@ def category_postlist(category):
 @view('property_list.jinja2')
 def taglist():
     descr = 'All tags given to blog posts in this blog:'
-    tags, ret_list = [], []
-    for post in POSTS.posts:
-        tags += post['tags']
-    unique_tags = set(tags)
-    for tag in unique_tags:
-        ret_list.append({'name': tag, 'occurrence': tags.count(tag)})
+    ret_list = []
+    ct = concat_tags()
+    for tag in unique_tags():
+        ret_list.append({'name': tag, 'occurrence': ct.count(tag)})
     ret_list = sorted(ret_list, key=lambda k: k['occurrence'], reverse=True)
     return dict(property=ret_list, introduction_paragraph=descr, property_name='Tag', active='tags')
 
@@ -94,13 +93,10 @@ def taglist():
 @view('property_list.jinja2')
 def categorylist():
     descr = 'The categories of posts in this blog:'
-    categories, ret_list = [], []
-    for post in POSTS.posts:
-        categories += post['categories']
-    unique_categories = set(categories)
-    if 'Uncategorized' in unique_categories: unique_categories.remove('Uncategorized')
-    for category in unique_categories:
-        ret_list.append({'name': category, 'occurrence': categories.count(category)})
+    ret_list = []
+    cc = concat_categories()
+    for category in unique_categories():
+        ret_list.append({'name': category, 'occurrence': cc.count(category)})
     ret_list = sorted(ret_list, key=lambda k: k['occurrence'], reverse=True)
     return dict(property=ret_list, introduction_paragraph=descr, property_name='Category', active='categories')
 
@@ -158,6 +154,35 @@ def robots():
     response.content_type = 'text/plain'
     return "User-agent: *\n{0}: /".format(ALLOW_CRAWLING)
 
+@interface.route('/sitemap.xml')
+@view('sitemap.jinja2')
+def sitemap():
+    if not BASELINK:
+        abort(404, "No baselink set -> no sitemap available due to missing absolute URLs.")
+    #response.content_type = 'xml/application'
+    response.content_type = 'text/xml;charset=UTF-8'
+    urls = []
+    urls.append({'loc': BASELINK, 'priority': '1.0'})
+    urls.append({'loc': BASELINK + '/search', 'priority': '0.5'})
+    for post in POSTS.posts:
+        url = {}
+        if post['address']:
+            url['loc'] = BASELINK + post['address']
+        else:
+            url['loc'] = BASELINK + '/post/{status}/{file}'.format(**post)
+        url['lastmod'] = post['modification_date'].date().isoformat()
+        url['priority'] = '{:.1f}'.format(1.0)
+        urls.append(url)
+    for tag in unique_tags():
+        urls.append({'loc': BASELINK + '/tag/' + tag, 'priority': '0.2'})
+    for category in unique_categories():
+        urls.append({'loc': BASELINK + '/category/' + category, 'priority': '0.2'})
+    for d in POSTS.years:
+        urls.append({'loc': BASELINK + '/{year}'.format(year=d.year), 'priority': '0.2'})
+    for d in POSTS.months:
+        urls.append({'loc': BASELINK + '/{year}/{month}'.format(year=d.year, month=d.month), 'priority': '0.2'})
+    return {'urls': urls}
+
 @interface.route('/favicon.ico')
 def get_favicon():
     if FAVICON:
@@ -175,6 +200,29 @@ def set_ua():
     Jinja2Template.defaults['show_experiment'] = random.random() < EXPERIMENT_PROBABILITY
 
 
+### posts helper functions
+
+def concat_tags():
+    """ Return a concatenated list of all tags found in any post """
+    tags = []
+    for post in POSTS.posts:
+        tags += post['tags']
+    return tags
+
+def concat_categories():
+    """ Return a concatenated list of all categories found in any post. Exclude the special 'Uncategorized' category. """
+    categories = []
+    for post in POSTS.posts:
+        categories += post['categories']
+    return [c for c in categories if c != 'Uncategorized']
+
+def unique_tags():
+    return set(concat_tags())
+
+def unique_categories():
+    return set(concat_categories())
+
+
 class StripPathMiddleware(object):
   def __init__(self, app):
     self.app = app
@@ -184,7 +232,7 @@ class StripPathMiddleware(object):
 
 
 def main():
-    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON, EXPERIMENT_PROBABILITY, MEDIA_FOLDER
+    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON, EXPERIMENT_PROBABILITY, MEDIA_FOLDER, BASELINK
     import argparse
     parser = argparse.ArgumentParser( 
       description='Run a local blog.' )
@@ -225,6 +273,9 @@ def main():
         MEDIA_FOLDER = args.media_folder
     else:
         MEDIA_FOLDER = os.path.join(args.folder, 'assets')
+
+    if args.baselink:
+        BASELINK = args.baselink
 
     if args.published_only:
         POSTS.keep_only_published()
