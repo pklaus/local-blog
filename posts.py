@@ -122,7 +122,7 @@ class Posts(object):
         self.update_collections()
 
     def keep_only_published(self):
-        self.keep_only(['publish'])
+        self.keep_only(['published'])
 
     def total(self):
         return len(self.posts)
