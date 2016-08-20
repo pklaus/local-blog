@@ -39,6 +39,7 @@ DEFAULT_CONTEXT = {
 ALLOW_CRAWLING = 'Disallow'
 FAVICON = None # 2-tuple containing path and filename of the favicon to serve
 EXPERIMENT_PROBABILITY = 0.01
+MEDIA_FOLDER = None
 
 ### The Bottle web application
 interface = Bottle()
@@ -53,9 +54,7 @@ def static(path):
     match = re.match(r".*(?P<thumb>-(?P<sizex>\d+)x(?P<sizey>\d+))\..*", path)
     if match:
         path = path.replace(match.group('thumb'), '')
-    media_path = POSTS.get_media_path(path)
-    if not media_path: abort(404, "No such blog post.")
-    return static_file(media_path, root=POSTS.folder)
+    return static_file(path, root=MEDIA_FOLDER)
 
 @interface.route('/')
 @view('list_posts.jinja2')
@@ -185,7 +184,7 @@ class StripPathMiddleware(object):
 
 
 def main():
-    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON, EXPERIMENT_PROBABILITY
+    global POSTS, DEFAULT_CONTEXT, ALLOW_CRAWLING, FAVICON, EXPERIMENT_PROBABILITY, MEDIA_FOLDER
     import argparse
     parser = argparse.ArgumentParser( 
       description='Run a local blog.' )
@@ -208,27 +207,27 @@ def main():
     parser.add_argument('--additional-sidebar-html', help='Additional HTML content to be added to the sidebar')
     parser.add_argument('--external-links', '-e', help='Links to external sites of yours. Specify like Github=http://github.com,Twitter=http://twitter.com')
     parser.add_argument('--published-only', '-o', action='store_true', help='Restrict the posts shown to those already published.')
-    parser.add_argument('--remove-upstream-links', '-r', action='store_true', help='Remove upstream links from blog posts')
     parser.add_argument('--favicon', help='favicon image file')
     parser.add_argument('--experiment-probability', type=float, help='Set a probability for showing an experiment (instead of the additional HTML in the leaderboard)')
     parser.add_argument('--experiment-html', help='HTML content to show if the experiment is carried out. Will show instead of leaderboard')
     parser.add_argument('--copyright', default="Copyright (c)", help='Copyright statement')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
+    parser.add_argument('--media-folder', help='The folder containing the media files (defaults to "assets" inside the blog entries folder).')
     parser.add_argument('folder', help='The folder of blog entries.')
     args = parser.parse_args()
 
     ALLOW_CRAWLING = 'Allow' if args.allow_crawling else 'Disallow'
 
-    if args.baselink:
-        POSTS = Posts(args.folder, args.baselink)
+    POSTS = Posts(args.folder)
+
+    if args.media_folder:
+        MEDIA_FOLDER = args.media_folder
     else:
-        POSTS = Posts(args.folder)
+        MEDIA_FOLDER = os.path.join(args.folder, 'assets')
 
     if args.published_only:
         POSTS.keep_only_published()
-    if args.remove_upstream_links:
-        POSTS.remove_upstream_links()
 
     DEFAULT_CONTEXT['months'] = POSTS.months
 

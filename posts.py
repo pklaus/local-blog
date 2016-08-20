@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-import os
-import json
+import os, re, logging
 from datetime import datetime, date
-import logging
 
 from bs4 import BeautifulSoup
 from markdown import markdown
@@ -18,7 +16,7 @@ MD_EXTENSIONS = [
 MD_EXT_CONFIGS = {
   'markdown.extensions.codehilite': { 'linenums': False, },
 }
-
+TIME_FMT = '%Y-%m-%d %H:%M:%S'
 
 def add_scrollable_to_pre(html_text):
     soup = BeautifulSoup(html_text, 'html.parser')
@@ -63,14 +61,11 @@ class Posts(object):
     FILE_EXTENSION = 'mdtxt'
     TIME_FMT = "%Y-%m-%dT%H:%M:%S"
 
-    def __init__(self, folder, baselink='http://yourblog.com', media_folder='./media'):
+    def __init__(self, folder):
         self.folder = folder
         self.posts = []
-        self.media = []
-        self.media_files = {}
         self.years = []
         self.months = []
-        self.baselink = baselink
         for file in os.listdir(folder):
             if file.endswith("." + self.FILE_EXTENSION):
                 try:
@@ -78,10 +73,6 @@ class Posts(object):
                 except Exception as e:
                     logger.warn('Could not add the post %s for the following reason:', file)
                     logger.warn(str(e))
-        self.media_folder = os.path.join(folder, media_folder)
-        for file in os.listdir(self.media_folder):
-            if file.endswith(".json"):
-                self._add_media(file)
         self.update_collections()
 
     def update_collections(self):
@@ -97,57 +88,42 @@ class Posts(object):
                 self.months.append(month)
         self.years.sort(reverse=True)
         self.months.sort(reverse=True)
-        for media in self.media:
-            filename = os.path.basename(media['path'])
-            self.media_files[filename] = media['path']
 
-    def _add_media(self, filename):
-        full_filename = os.path.join(self.media_folder, filename)
-        with open(full_filename, 'r') as f:
-            media = json.load(f)
-            media['file_present'] = os.path.isfile(os.path.join(self.folder, media['path']))
-            assert media['file_present'] == True
-        self.media.append(media)
-
-    def get_media_path(self, filename):
-        return self.media_files[filename]
-
-    def _add_post(self, file):
+    def _add_post(self, filename):
         post = Post()
-        filecontent = open(os.path.join(self.folder, file), 'r').read()
-        parts = filecontent.split("\n\n### Content\n\n")
-        header = parts[0]
-        postcontent = parts[1]
-        header = header.split("\n")
-        assert header[0].startswith('# ')
-        title = header[0][2:]
-        assert header[2].startswith('* Categories: ')
-        categories = set(header[2][14:].split(', '))
-        if 'Uncategorized' in categories: categories.remove('Uncategorized')
-        categories = list(categories)
-        if categories == ['']: categories = []
-        assert header[3].startswith('* Tags: ')
-        tags = header[3][8:].split(', ')
-        if tags == ['']: tags = []
-        assert header[4].startswith('* Creation Date: ')
-        creation_date = datetime.strptime(header[4][17:], self.TIME_FMT)
-        assert header[5].startswith('* Modification Date: ')
-        modification_date = datetime.strptime(header[5][21:], self.TIME_FMT)
-        assert header[6].startswith('* Link: <')
-        link = header[6][9:-1]
-        address = link.replace(self.baselink, '')
-        if address.startswith('/?'): address = None
-        slug = None
-        if address: slug = address.split('/')[3]
-        status = None
-        if file.startswith('p_') or file.startswith('publish_'):
-            status = 'publish'
-        if file.startswith('pr_') or file.startswith('private_'):
-            status = 'private'
-        if file.startswith('d_') or file.startswith('draft_'):
-            status = 'draft'
-        #import pdb; pdb.set_trace()
-        post['file'] = file
+        filecontent = open(os.path.join(self.folder, filename), 'r').read()
+        header, _, postcontent = filecontent.partition("\n\n### Content\n\n")
+        # title
+        title = re.search(r"^# (?P<result>.*)$", header, re.MULTILINE)
+        title = title.group('result')
+        # categories
+        categories = re.search(r"^\* Categories: (?P<result>.*)$", header, re.MULTILINE)
+        if categories: categories = categories.group('result').split(', ')
+        else: categories = []
+        # tags
+        tags = re.search(r"^\* Tags: (?P<result>.*)$", header, re.MULTILINE)
+        if tags: tags = tags.group('result').split(', ')
+        else: tags = []
+        # creation_date
+        creation_date = re.search(r"^\* Creation Date: (?P<result>.*)$", header, re.MULTILINE)
+        creation_date = datetime.strptime(creation_date.group('result'), TIME_FMT)
+        # modification_date
+        modification_date = re.search(r"^\* Modification Date: (?P<result>.*)$", header, re.MULTILINE)
+        if modification_date: modification_date = datetime.strptime(modification_date.group('result'), TIME_FMT)
+        else: modification_date = creation_date
+        # slug
+        slug = re.search(r"^\* Slug: (?P<result>.*)$", header, re.MULTILINE)
+        if slug: slug = slug.group('result')
+        else: slug = None
+        # status
+        status = re.search(r"^\* Status: (?P<result>.*)$", header, re.MULTILINE)
+        if status: status = status.group('result')
+        else: status = 'draft'
+        # address (from creation_date and )
+        if status in ('published', 'private'): address = '/{:04d}/{:02d}/{}'.format(creation_date.year, creation_date.month, slug)
+        else: address = None
+        # done
+        post['file'] = filename
         post['title'] = title
         post['categories'] = categories
         post['tags'] = tags
@@ -155,7 +131,6 @@ class Posts(object):
         post['year'] = creation_date.year
         post['month'] = creation_date.month
         post['modification_date'] = modification_date
-        post['link'] = link
         post['status'] = status
         post['address'] = address
         post['slug'] = slug
@@ -192,11 +167,6 @@ class Posts(object):
     def keep_only_published(self):
         self.keep_only(['publish'])
 
-    def remove_upstream_links(self):
-        for post in self.posts:
-            del post['link']
-        self.update_collections()
-
     def total(self):
         return len(self.posts)
 
@@ -204,19 +174,11 @@ if __name__ == "__main__":
     import argparse, pprint, random
     parser = argparse.ArgumentParser(description='Testing the posts module')
     parser.add_argument('local_blog_folder', help='Folder containing the blog posts')
-    parser.add_argument('--baselink', '-b', help='Baselink of your blog, like http://philipp.wordpress.com')
     args = parser.parse_args()
 
-    if args.baselink:
-        posts = Posts(args.local_blog_folder, args.baselink)
-    else:
-        posts = Posts(args.local_blog_folder)
+    posts = Posts(args.local_blog_folder)
 
     print("This directory contains {} blog posts".format(posts.total()))
-
-    print("Media files found (random selection of 10):")
-    keys = random.sample(list(posts.media_files), 10)
-    print(pprint.pformat({key: posts.media_files[key] for key in keys}))
 
     posts.keep_only_published()
     print("The latest 10 published posts:")

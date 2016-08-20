@@ -24,7 +24,6 @@
             <a href="/tag/{{tag}}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
           {% endfor %}
       {% endif %}
-      {% if post.link %}<br /> <a href="{{ post.link }}">(Upstream Link)</a>{% endif %}
     </p>
     <div>
       {% if ua.is_pc %}
