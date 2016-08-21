@@ -268,6 +268,7 @@ def main():
     parser.add_argument('--experiment-probability', type=float, help='Set a probability for showing an experiment (instead of the additional HTML in the leaderboard)')
     parser.add_argument('--experiment-html', help='HTML content to show if the experiment is carried out. Will show instead of leaderboard')
     parser.add_argument('--copyright', default="Copyright (c)", help='Copyright statement')
+    parser.add_argument('--logfile', help='(Optional) logfile to log requests to')
     parser.add_argument('--baselink', '-b',
       help='Baselink of your blog, like http://philipp.wordpress.com')
     parser.add_argument('--media-folder', help='The folder containing the media files (defaults to "assets" inside the blog entries folder).')
@@ -335,6 +336,13 @@ def main():
     Jinja2Template.defaults = DEFAULT_CONTEXT
 
     app = StripPathMiddleware(interface)
+
+    if args.logfile:
+        from requestlogger import WSGILogger, ApacheFormatter
+        from logging.handlers import TimedRotatingFileHandler
+
+        handlers = [ TimedRotatingFileHandler(args.logfile, 'd', 7) , ]
+        app = WSGILogger(app, handlers, ApacheFormatter())
 
     if args.debug and args.ipv6:
         args.error('You cannot use IPv6 in debug mode, sorry.')

@@ -8,3 +8,4 @@ user-agents
 pyyaml
 ua-parser
 python-markdown-math
+wsgi-request-logger
