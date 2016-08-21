@@ -131,6 +131,15 @@ def latest_post():
     post = POSTS.latest
     redirect(post['address'] or '/post/{status}/{file}'.format(**post))
 
+@interface.route('/post/<id>')
+@view('post.jinja2')
+def post_from_filename(id):
+    result =  [post for post in POSTS.posts if os.path.splitext(os.path.basename(post['file']))[0] == id]
+    if len(result) == 1:
+        post = result[0]
+        return dict(post=result[0])
+    else: abort(404, "No such blog post.")
+
 @interface.route('/post/<status>/<file>')
 @view('post.jinja2')
 def post_from_filename(status, file):
