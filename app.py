@@ -342,7 +342,7 @@ def main():
         from logging.handlers import TimedRotatingFileHandler
 
         handlers = [ TimedRotatingFileHandler(args.logfile, 'd', 7) , ]
-        app = WSGILogger(app, handlers, ApacheFormatter())
+        app = WSGILogger(app, handlers, ApacheFormatter(), ip_header='X-Forwarded-For')
 
     if args.debug and args.ipv6:
         args.error('You cannot use IPv6 in debug mode, sorry.')
