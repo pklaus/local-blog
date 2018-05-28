@@ -90,16 +90,3 @@ h2.blog-post-title {
 .blog-sidebar {
   margin-top: 13px;
 }
-
-
-@media (min-width: 992px) {
-  .container {
-    width: 980px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .container {
-    width: 1070px;
-  }
-}
