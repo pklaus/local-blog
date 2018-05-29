@@ -90,3 +90,7 @@ h2.blog-post-title {
 .blog-sidebar {
   margin-top: 13px;
 }
+
+p.lead.blog-description {
+  margin-top: 7px;
+}
