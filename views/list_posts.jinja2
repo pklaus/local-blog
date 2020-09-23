@@ -40,7 +40,7 @@
           {% endfor %}
       {% endif %}
     </p>
-    {{ post.rendered_preview }}
+    {{ post.rendered_preview|safe }}
     <p><a href="{{ post.address or '/post/{status}/{file}'.format(**post) }}">Read on</a></p>
   </div>
   {% endfor %}

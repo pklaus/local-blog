@@ -31,7 +31,7 @@
       {% endif %}
     </div>
     <div class="post_content">
-      {{ post.rendered_content }}
+      {{ post.rendered_content|safe }}
     </div>
   </div>
 {% endblock %}
