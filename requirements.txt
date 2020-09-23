@@ -1,9 +1,9 @@
 beautifulsoup4
-git+https://github.com/bottlepy/bottle.git
+bottle
 jinja2
 pygments
 markdown
-cherrypy
+paste
 user-agents
 pyyaml
 ua-parser

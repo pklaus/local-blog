@@ -351,9 +351,9 @@ def main():
     else:
         if args.ipv6:
             # CherryPy is Python3 ready and has IPv6 support:
-            run(app, host='::', server='cherrypy', port=args.port)
+            run(app, host='::', server='paste', port=args.port)
         else:
-            run(app, host='0.0.0.0', server='cherrypy', port=args.port)
+            run(app, host='0.0.0.0', server='paste', port=args.port)
 
 if __name__ == '__main__':
     main()
