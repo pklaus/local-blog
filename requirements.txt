@@ -1,5 +1,5 @@
 beautifulsoup4
-bottle
+git+https://github.com/bottlepy/bottle.git
 jinja2
 pygments
 markdown
