@@ -18,7 +18,7 @@ MD_EXTENSIONS = [
   'mdx_math',
 ]
 MD_EXT_CONFIGS = {
-  'markdown.extensions.codehilite': { 'linenums': False, },
+  'markdown.extensions.codehilite': { 'linenums': False, 'guess_lang': False},
   'mdx_math':   { 'enable_dollar_delimiter': True, },
 }
 

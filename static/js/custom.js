@@ -12,7 +12,7 @@ $(document).ready(function() {
 /* enable line numbers for pre tags
    http://www.jquery2dotnet.com/2013/09/pre-tag-with-line-numbers-using-css3.html */
 $(document).ready(function() {
-    $("pre").html(function (index, html) {
+    $("pre.pre-x-scrollable code").html(function (index, html) {
         return html.trim().replace(/^(.*)$/mg, "<span class=\"line\">$1</span>")
     });
 });
